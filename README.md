@@ -1,4 +1,4 @@
-#TOTP Authentication using NestJS
+# TOTP Authentication using NestJS
 
 This is a sample project for JWT and TOTP (Two-Factor Authentication)
 
