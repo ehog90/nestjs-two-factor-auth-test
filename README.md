@@ -32,7 +32,7 @@ $ npm run start:prod
 
 ### Swagger test site:
 
-http://localhost:3000/docs
+http://localhost:3420/docs
 
 ### Important notes:
 
@@ -41,8 +41,16 @@ http://localhost:3000/docs
 
 ### Test Workflow:
 
-* ```auth/login```: Log in with user ```testuser``` with password ```12345```. Do not provide any key for Two-Factor Authentication. Use the returned JWT key for authorization.
+* ```auth/login```: Log in with email ```test2@test.test``` with password ```12345```. Do not provide any key for Two-Factor Authentication. Use the returned JWT key for authorization.
 * ```auth/register-2fa```: Call this endpoint to obtain the QR Code. It will be downloaded
 * Read the QR Code into Google Authenticator / Microsoft Authenticator
 * ```auth/validate-2fa-key```: Try to validate the generated code.
-* ```auth/login```: Log in with user ```testuser``` with password ```12345``` again. It's going to fail unless you provide the Two-Factor Key.
+* ```auth/login```: Log in with email ```test2@test.test``` with password ```12345``` again. It's going to fail unless you provide the Two-Factor Key.
+
+
+### Testing with existing auth secret:
+* Read this QR code using the desired Authenticator app
+
+ ![](https://github.com/ehog90/nestjs-two-factor-auth-test/blob/main/img/demo_qr.png?raw=true)
+
+* ```auth/login```: Log in with email ```test@test.test``` with password ```12345```. Do not provide any key for Two-Factor Authentication. Use the returned JWT key for authorization.

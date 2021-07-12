@@ -4,7 +4,7 @@ import { IsEmail } from 'class-validator';
 export class LoginDto {
   @ApiProperty()
   @IsEmail()
-  public name: string;
+  public email: string;
 
   @ApiProperty()
   public password: string;

@@ -6,16 +6,28 @@ export class UsersService {
   // #region Properties (1)
 
   private mockUsers: IUserData[] = [
-    { name: 'testuser', email: 'test@test.test', id: 1, password: '12345' },
+    {
+      name: 'testuser',
+      email: 'test@test.test',
+      id: 420,
+      password: '12345',
+      twoFaSecret: 'NBKVILYNBRLWMOS2',
+    },
+    {
+      name: 'testuser_noauth',
+      email: 'test2@test.test',
+      id: 840,
+      password: '12345',
+    },
   ];
 
   // #endregion Properties (1)
 
   // #region Public Methods (3)
 
-  public getUser(name: string, password: string) {
+  public getUser(email: string, password: string) {
     return this.mockUsers.filter(
-      (u) => u.name === name && u.password === password,
+      (u) => u.email === email?.toLowerCase() && u.password === password,
     )?.[0];
   }
 

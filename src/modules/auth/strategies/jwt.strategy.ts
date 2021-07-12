@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { IJwtDto } from '../services/auth/auth.interfaces';
 import { UsersService } from '../services/users/users.service';
-import { UserContextDto } from '../decorators/user-context.dto';
+import { UserContextAll } from '../decorators/user-context.dto';
 import { config } from 'src/modules/configuration';
 
 @Injectable()
@@ -24,15 +24,16 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
   public async validate(
     jwtPayload: IJwtDto,
-  ): Promise<UserContextDto | boolean> {
+  ): Promise<UserContextAll | boolean> {
     const userData = await this.usersService.getUserById(jwtPayload.id);
     if (!userData) {
       return false;
     }
-    return new UserContextDto(
+    return new UserContextAll(
       userData.id,
-      userData.email,
+      userData.name,
       userData.twoFaSecret,
+      userData.email,
     );
   }
 

@@ -15,8 +15,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { toFileStream } from 'qrcode';
-import { UserContext } from '../../decorators/user-context.decorator';
-import { UserContextDto } from '../../decorators/user-context.dto';
+import { UserContextWithAuthentication } from '../../decorators/user-context-with-authentication.decorator';
+import {
+  UserContextAll,
+  UserContextPublicDto,
+} from '../../decorators/user-context.dto';
 import { LoginResultDto } from '../../dto/login-result.dto';
 import { LoginDto } from '../../dto/login.dto';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
@@ -25,6 +28,7 @@ import { TotpService } from '../../services/totp/totp.service';
 import { Response } from 'express';
 import { authenticator } from 'otplib';
 import { TwoFactorSecretDto } from '../../dto/two-factor-secret.dto';
+import { UserContextPublic } from '../../decorators/user-context-public';
 
 @Controller('auth')
 @ApiTags('Authentication')
@@ -43,11 +47,12 @@ export class AuthController {
   @Get('auth-context')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @ApiResponse({ type: UserContextDto })
+  @ApiResponse({ type: UserContextAll })
   @ApiOperation({ summary: 'For authentication testing purposes.' })
   public getAuthContext(
-    @UserContext() userContext: UserContextDto,
-  ): UserContextDto {
+    @UserContextPublic()
+    userContext: UserContextPublicDto,
+  ): UserContextPublicDto {
     return userContext;
   }
 
@@ -57,7 +62,7 @@ export class AuthController {
   public async login(@Body() login: LoginDto): Promise<LoginResultDto> {
     try {
       const auth = await this.authService.authenticate(
-        login.name,
+        login.email,
         login.password,
         login.twoFactorCode,
       );
@@ -77,7 +82,8 @@ export class AuthController {
   })
   @ApiProduces('image/png')
   public registerTwoFactorAuth(
-    @UserContext() userContext: UserContextDto,
+    @UserContextWithAuthentication()
+    userContext: UserContextAll,
     @Res() response: Response,
   ) {
     response.setHeader('Content-Disposition', `attachment; filename="qr.png"`);
@@ -92,7 +98,8 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Validate Two-Factor authentication code' })
   public validateCode(
-    @UserContext() userContext: UserContextDto,
+    @UserContextWithAuthentication()
+    userContext: UserContextAll,
     @Body() twoFactorDto: TwoFactorSecretDto,
   ) {
     return authenticator.verify({

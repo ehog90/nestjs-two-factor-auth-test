@@ -5,5 +5,5 @@ export class LoginResultDto {
   public token: string;
 
   @ApiProperty()
-  public name: string;
+  public email: string;
 }

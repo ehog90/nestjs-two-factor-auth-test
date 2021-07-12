@@ -17,15 +17,19 @@ export class AuthService {
   // #region Public Methods (1)
 
   public async authenticate(
-    name: string,
+    email: string,
     password: string,
     twoFactorCode?: string,
   ): Promise<any> {
-    const user = this.usersService.getUser(name, password);
+    const user = this.usersService.getUser(email, password);
     if (user) {
       if (user.twoFaSecret) {
         if (!twoFactorCode) {
-          throw 'Two-factor authentication is enabled for this user, but Code is not provided.';
+          throw {
+            error:
+              'Two-factor authentication is enabled for this user, but Code is not provided.',
+            code: 2,
+          };
         }
         const isTwoFactorValid = authenticator.verify({
           token: twoFactorCode,
@@ -39,7 +43,7 @@ export class AuthService {
             tokenData,
           };
         } else {
-          throw 'Authentication Failed.';
+          throw { error: 'Authentication Failed.', code: 1 };
         }
       } else {
         const token = await this.jwtService.signAsync({ id: user.id });
@@ -50,7 +54,7 @@ export class AuthService {
         };
       }
     }
-    throw 'Authentication Failed.';
+    throw { error: 'Authentication Failed.', code: 1 };
   }
 
   // #endregion Public Methods (1)
